@@ -231,7 +231,17 @@
     <section style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,72px) clamp(56px,8vw,104px);display:grid;gap:clamp(24px,3vw,40px)">
       <sc-for list="{{ stories }}" as="story">
       <article style="background:var(--color-surface);border-radius:44px;padding:clamp(28px,4vw,44px)">
+        <sc-if value="{{ story.isShort }}">
         <blockquote style="font-family:var(--font-heading);font-size:clamp(20px,2.2vw,26px);line-height:1.35;margin:0;max-width:52ch;text-wrap:balance;color:color-mix(in srgb, var(--color-text) 92%, transparent)">“{{ story.quote }}”</blockquote>
+        </sc-if>
+        <sc-if value="{{ story.isLong }}">
+        <h2 style="font-family:var(--font-heading);font-size:clamp(21px,2.2vw,27px);line-height:1.22;margin:0 0 16px;max-width:32ch;text-wrap:balance">{{ story.title }}</h2>
+        <div style="display:grid;gap:14px;max-width:64ch">
+          <sc-for list="{{ story.paragraphs }}" as="para">
+          <p style="font-size:16px;line-height:1.72;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">{{ para }}</p>
+          </sc-for>
+        </div>
+        </sc-if>
         <p style="font-size:14.5px;line-height:1.5;margin:16px 0 0;color:var(--color-accent-700)">— {{ story.name }} · {{ story.context }}</p>
 
         <div style="margin-top:clamp(18px,2.4vw,26px);border-top:1px solid var(--color-divider);padding-top:14px">
@@ -475,6 +485,20 @@ const STORIES = [
     seed: [
       { author: "iGEM UBC team", text: "‘Nobody told me’ is one of the barriers we most want to change. Thank you for sharing it." }
     ]
+  },
+  {
+    long: true,
+    title: "What eighteen months of treatment actually looked like",
+    paragraphs: [
+      "It started with what everyone assumed was a simple urinary tract infection. The first antibiotic didn't touch it. Neither did the second. By the time a culture came back naming the organism, I had already spent three weeks feeling like I was getting worse while being told to finish the course and wait.",
+      "The hardest stretch wasn't the illness itself — it was everything around it. I stopped being able to plan more than a week ahead. I turned down a job because I couldn't promise I'd be well enough to start it. Friends drifted, not out of unkindness, but because “still sick” is a hard thing to hold onto for months at a time. I became an expert in my own bloodwork and a stranger to my own calendar.",
+      "What I wish someone had told me early on is that this is common enough that there are words for it, and that the exhaustion and the isolation aren't a personal failing. I'm sharing this because when I was in the middle of it, I couldn't find a single account that sounded like mine. If yours sounds like this too, you are not the only one."
+    ],
+    name: "Anonymous",
+    context: "Recurrent resistant UTI · 18 months of treatment",
+    seed: [
+      { author: "iGEM UBC team", text: "Thank you for writing all of this out — ‘a stranger to my own calendar’ is exactly the kind of thing this project exists to surface." }
+    ]
   }
 ];
 
@@ -557,7 +581,8 @@ class Component extends DCLogic {
         const list = this.state.comments[i] || [];
         const draft = this.state.drafts[i] || { name: '', text: '' };
         return {
-          quote: s.quote, name: s.name, context: s.context,
+          quote: s.quote || '', name: s.name, context: s.context,
+          isShort: !s.long, isLong: !!s.long, title: s.title || '', paragraphs: s.paragraphs || [],
           comments: list,
           countLabel: list.length === 1 ? '1 comment' : list.length + ' comments',
           open: this.state.open[i],
