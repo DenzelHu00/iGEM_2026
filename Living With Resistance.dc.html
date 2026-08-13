@@ -9,7 +9,7 @@
 <x-dc>
 <helmet>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Living With Resistance · iGEM UBC Human Practices</title>
+<title>PATH-AMR (Psychosocial And Treatment Hurdles in AMR) · iGEM UBC Human Practices</title>
 <link rel="stylesheet" href="_ds/organic-9a340259-7d77-41d7-865e-cb37333c5ea1/styles.css">
 <script src="_ds/organic-9a340259-7d77-41d7-865e-cb37333c5ea1/_ds_bundle.js"></script>
 <script src="./image-slot.js"></script>
@@ -404,7 +404,7 @@
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;projectName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Living With Resistance&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;heroShapeColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;var(--color-accent-2-200)&quot;,&quot;options&quot;:[&quot;var(--color-accent-2-200)&quot;,&quot;var(--color-accent-200)&quot;,&quot;var(--color-accent-2-300)&quot;,&quot;var(--color-neutral-200)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;teamPhotoShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;circle&quot;,&quot;rounded&quot;],&quot;default&quot;:&quot;rounded&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Team page&quot;},&quot;showEthics&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Contact page&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;projectName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PATH-AMR&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;heroShapeColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;var(--color-accent-2-200)&quot;,&quot;options&quot;:[&quot;var(--color-accent-2-200)&quot;,&quot;var(--color-accent-200)&quot;,&quot;var(--color-accent-2-300)&quot;,&quot;var(--color-neutral-200)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;teamPhotoShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;circle&quot;,&quot;rounded&quot;],&quot;default&quot;:&quot;rounded&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Team page&quot;},&quot;showEthics&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Contact page&quot;}}">
 const TABS = ['overview', 'goals', 'team', 'contact'];
 
 class Component extends DCLogic {
@@ -441,7 +441,7 @@ class Component extends DCLogic {
           te = this.tabStyle('team'), co = this.tabStyle('contact');
     const shape = this.props.teamPhotoShape ?? 'circle';
     return {
-      brandName: this.props.projectName ?? 'Living With Resistance',
+      brandName: this.props.projectName ?? 'PATH-AMR',
       shapeColor: this.props.heroShapeColor ?? 'var(--color-accent-2-200)',
       photoRadius: shape === 'circle' ? '50%' : '28px',
       showEthics: this.props.showEthics ?? true,
