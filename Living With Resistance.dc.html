@@ -236,11 +236,24 @@
         </sc-if>
         <sc-if value="{{ story.isLong }}">
         <h2 style="font-family:var(--font-heading);font-size:clamp(21px,2.2vw,27px);line-height:1.22;margin:0 0 16px;max-width:32ch;text-wrap:balance">{{ story.title }}</h2>
-        <div style="display:grid;gap:14px;max-width:64ch">
-          <sc-for list="{{ story.paragraphs }}" as="para">
-          <p style="font-size:16px;line-height:1.72;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">{{ para }}</p>
-          </sc-for>
+        <sc-if value="{{ story.showPreview }}">
+        <div style="max-width:64ch">
+          <p style="font-size:16px;line-height:1.72;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">{{ story.preview }}</p>
+          <button type="button" onClick="{{ story.onExpand }}" style="margin-top:14px;background:none;border:0;padding:0;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--color-accent-700)" style-hover="color:var(--color-accent-800)">{{ story.expandLabel }}</button>
         </div>
+        </sc-if>
+        <sc-if value="{{ story.showFull }}">
+        <div style="max-width:64ch">
+          <div style="display:grid;gap:14px">
+            <sc-for list="{{ story.paragraphs }}" as="para">
+            <p style="font-size:16px;line-height:1.72;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">{{ para }}</p>
+            </sc-for>
+          </div>
+          <sc-if value="{{ story.canCollapse }}">
+          <button type="button" onClick="{{ story.onExpand }}" style="margin-top:14px;background:none;border:0;padding:0;cursor:pointer;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--color-accent-700)" style-hover="color:var(--color-accent-800)">{{ story.expandLabel }}</button>
+          </sc-if>
+        </div>
+        </sc-if>
         </sc-if>
         <p style="font-size:14.5px;line-height:1.5;margin:16px 0 0;color:var(--color-accent-700)">— {{ story.name }} · {{ story.context }}</p>
 
@@ -502,11 +515,21 @@ const STORIES = [
   }
 ];
 
+const STORY_PREVIEW_LIMIT = 300;
+function makePreview(text, limit) {
+  if (text.length <= limit) return text;
+  let cut = text.slice(0, limit);
+  const sp = cut.lastIndexOf(' ');
+  if (sp > limit * 0.6) cut = cut.slice(0, sp);
+  return cut.replace(/[\s.,;:—-]+$/, '') + '…';
+}
+
 class Component extends DCLogic {
   state = { tab: 'overview', sent: false, name: '', email: '', msg: '', mode: 'survey', consent: false,
     comments: STORIES.map((s) => s.seed.slice()),
     drafts: STORIES.map(() => ({ name: '', text: '' })),
-    open: STORIES.map(() => false) };
+    open: STORIES.map(() => false),
+    expanded: STORIES.map(() => false) };
 
   setDraft(i, field, value) {
     const drafts = this.state.drafts.map((d, k) => k === i ? { ...d, [field]: value } : d);
@@ -526,6 +549,11 @@ class Component extends DCLogic {
   toggleStory(i) {
     const open = this.state.open.map((v, k) => k === i ? !v : v);
     this.setState({ open });
+  }
+
+  toggleExpand(i) {
+    const expanded = this.state.expanded.map((v, k) => k === i ? !v : v);
+    this.setState({ expanded });
   }
 
   componentDidMount() {
@@ -580,9 +608,18 @@ class Component extends DCLogic {
       stories: STORIES.map((s, i) => {
         const list = this.state.comments[i] || [];
         const draft = this.state.drafts[i] || { name: '', text: '' };
+        const full = (s.paragraphs || []).join(' ');
+        const needsTrunc = !!s.long && full.length > STORY_PREVIEW_LIMIT;
+        const isExpanded = this.state.expanded[i];
         return {
           quote: s.quote || '', name: s.name, context: s.context,
           isShort: !s.long, isLong: !!s.long, title: s.title || '', paragraphs: s.paragraphs || [],
+          showPreview: needsTrunc && !isExpanded,
+          showFull: !needsTrunc || isExpanded,
+          canCollapse: needsTrunc && isExpanded,
+          preview: needsTrunc ? makePreview(full, STORY_PREVIEW_LIMIT) : full,
+          expandLabel: isExpanded ? '▴ Show less' : '▾ Read the full story',
+          onExpand: () => this.toggleExpand(i),
           comments: list,
           countLabel: list.length === 1 ? '1 comment' : list.length + ' comments',
           open: this.state.open[i],
