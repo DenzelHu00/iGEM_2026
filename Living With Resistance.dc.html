@@ -40,6 +40,7 @@
     <nav style="display:flex;gap:6px;flex-wrap:wrap" aria-label="Sections">
       <button type="button" onClick="{{ goOverview }}" style="font-family:var(--font-body);font-size:14px;font-weight:600;border:0;cursor:pointer;padding:8px 15px;border-radius:999px;background:{{ ovBg }};color:{{ ovInk }}" style-hover="opacity:0.85">Overview</button>
       <button type="button" onClick="{{ goGoals }}" style="font-family:var(--font-body);font-size:14px;font-weight:600;border:0;cursor:pointer;padding:8px 15px;border-radius:999px;background:{{ goBg }};color:{{ goInk }}" style-hover="opacity:0.85">Goals &amp; mission</button>
+      <button type="button" onClick="{{ goStories }}" style="font-family:var(--font-body);font-size:14px;font-weight:600;border:0;cursor:pointer;padding:8px 15px;border-radius:999px;background:{{ stBg }};color:{{ stInk }}" style-hover="opacity:0.85">Patient stories</button>
       <button type="button" onClick="{{ goTeam }}" style="font-family:var(--font-body);font-size:14px;font-weight:600;border:0;cursor:pointer;padding:8px 15px;border-radius:999px;background:{{ teBg }};color:{{ teInk }}" style-hover="opacity:0.85">Our team</button>
       <button type="button" onClick="{{ goContact }}" style="font-family:var(--font-body);font-size:14px;font-weight:600;border:0;cursor:pointer;padding:8px 15px;border-radius:999px;background:{{ coBg }};color:{{ coInk }}" style-hover="opacity:0.85">Contact us</button>
     </nav>
@@ -214,6 +215,46 @@
         <p style="font-size:16px;line-height:1.7;margin:0 0 26px;max-width:56ch;color:color-mix(in srgb, var(--color-text) 84%, transparent)">Everything above depends on hearing from people who have lived it. If you have, ten minutes of your time changes what we’re able to say.</p>
         <button type="button" class="btn btn-primary" onClick="{{ goContact }}" style="padding:12px 24px;font-size:15px">Share your experience</button>
       </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isStories }}" hint-placeholder-val="{{ true }}">
+  <main>
+    <section style="max-width:1180px;margin:0 auto;padding:clamp(44px,6vw,84px) clamp(20px,5vw,72px) clamp(24px,4vw,48px)">
+      <h1 style="font-family:var(--font-heading);font-size:clamp(34px,4.6vw,58px);line-height:1.1;letter-spacing:-0.02em;margin:0 0 24px;max-width:20ch;text-wrap:balance">In their own words</h1>
+      <p style="font-size:18px;line-height:1.65;max-width:60ch;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">Short accounts from people living with resistant infections, and from the families, caregivers and clinicians around them. Read them, and if something here resonates you can leave a note underneath.</p>
+      <p style="font-size:13.5px;line-height:1.6;margin:16px 0 0;max-width:60ch;padding:14px 18px;border-radius:24px;background:var(--color-accent-100);color:var(--color-accent-800)">Placeholder stories for now — real accounts will replace these as we gather them. Comments are a live preview only: they are not saved anywhere yet and clear when you refresh the page.</p>
+    </section>
+
+    <section style="max-width:1180px;margin:0 auto;padding:0 clamp(20px,5vw,72px) clamp(56px,8vw,104px);display:grid;gap:clamp(24px,3vw,40px)">
+      <sc-for list="{{ stories }}" as="story">
+      <article style="background:var(--color-surface);border-radius:44px;padding:clamp(28px,4vw,44px)">
+        <blockquote style="font-family:var(--font-heading);font-size:clamp(20px,2.2vw,26px);line-height:1.35;margin:0;max-width:52ch;text-wrap:balance;color:color-mix(in srgb, var(--color-text) 92%, transparent)">“{{ story.quote }}”</blockquote>
+        <p style="font-size:14.5px;line-height:1.5;margin:16px 0 0;color:var(--color-accent-700)">— {{ story.name }} · {{ story.context }}</p>
+
+        <div style="margin-top:clamp(22px,3vw,32px);border-top:1px solid var(--color-divider);padding-top:22px">
+          <h3 style="font-family:var(--font-heading);font-size:15px;line-height:1.3;margin:0 0 16px;letter-spacing:0.01em;color:color-mix(in srgb, var(--color-text) 74%, transparent)">{{ story.countLabel }}</h3>
+
+          <ul style="list-style:none;margin:0 0 20px;padding:0;display:grid;gap:12px">
+            <sc-for list="{{ story.comments }}" as="c">
+            <li style="background:var(--color-bg);border-radius:20px;padding:12px 16px">
+              <p style="font-size:13px;font-weight:700;margin:0 0 3px;color:var(--color-accent-800)">{{ c.author }}</p>
+              <p style="font-size:14.5px;line-height:1.6;margin:0;color:color-mix(in srgb, var(--color-text) 84%, transparent)">{{ c.text }}</p>
+            </li>
+            </sc-for>
+          </ul>
+
+          <form onSubmit="{{ story.onPost }}" style="display:grid;gap:10px;max-width:520px">
+            <input class="input" type="text" value="{{ story.draftName }}" onChange="{{ story.onDraftName }}" placeholder="Your name (optional)">
+            <textarea class="input" rows="2" value="{{ story.draftText }}" onChange="{{ story.onDraftText }}" placeholder="Leave a supportive comment…" style="border-radius:20px;padding:12px 16px"></textarea>
+            <div>
+              <button type="submit" class="btn btn-primary" style="padding:10px 22px;font-size:14.5px">Post comment</button>
+            </div>
+          </form>
+        </div>
+      </article>
+      </sc-for>
     </section>
   </main>
   </sc-if>
@@ -405,10 +446,54 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;projectName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;PATH-AMR&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;heroShapeColor&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;var(--color-accent-2-200)&quot;,&quot;options&quot;:[&quot;var(--color-accent-2-200)&quot;,&quot;var(--color-accent-200)&quot;,&quot;var(--color-accent-2-300)&quot;,&quot;var(--color-neutral-200)&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Identity&quot;},&quot;teamPhotoShape&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;circle&quot;,&quot;rounded&quot;],&quot;default&quot;:&quot;rounded&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Team page&quot;},&quot;showEthics&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Contact page&quot;}}">
-const TABS = ['overview', 'goals', 'team', 'contact'];
+const TABS = ['overview', 'goals', 'stories', 'team', 'contact'];
+
+const STORIES = [
+  {
+    quote: "The hardest part wasn't the infection itself. It was the isolation room — eight days behind a closed door, watching people hesitate at the glass before they came in.",
+    name: "Anonymous",
+    context: "Living with a resistant MRSA infection",
+    seed: [
+      { author: "iGEM UBC team", text: "Thank you for trusting us with this. The isolation piece comes up again and again in what we've read." }
+    ]
+  },
+  {
+    quote: "No one could tell us how long it would last, or whether it would come back. We learned to live inside that question mark.",
+    name: "Anonymous",
+    context: "Caregiver and partner of a patient",
+    seed: [
+      { author: "Community member", text: "This is exactly what my family went through. You are not alone in it." }
+    ]
+  },
+  {
+    quote: "After two years of antibiotics I still couldn't explain my own diagnosis to my family — because no one had ever really explained it to me.",
+    name: "Anonymous",
+    context: "Long-term antibiotic treatment",
+    seed: [
+      { author: "iGEM UBC team", text: "‘Nobody told me’ is one of the barriers we most want to change. Thank you for sharing it." }
+    ]
+  }
+];
 
 class Component extends DCLogic {
-  state = { tab: 'overview', sent: false, name: '', email: '', msg: '', mode: 'survey', consent: false };
+  state = { tab: 'overview', sent: false, name: '', email: '', msg: '', mode: 'survey', consent: false,
+    comments: STORIES.map((s) => s.seed.slice()),
+    drafts: STORIES.map(() => ({ name: '', text: '' })) };
+
+  setDraft(i, field, value) {
+    const drafts = this.state.drafts.map((d, k) => k === i ? { ...d, [field]: value } : d);
+    this.setState({ drafts });
+  }
+
+  postComment(i) {
+    const draft = this.state.drafts[i] || { name: '', text: '' };
+    const text = (draft.text || '').trim();
+    if (!text) return;
+    const author = (draft.name || '').trim() || 'Anonymous';
+    const comments = this.state.comments.map((list, k) => k === i ? [...list, { author, text }] : list);
+    const drafts = this.state.drafts.map((d, k) => k === i ? { name: '', text: '' } : d);
+    this.setState({ comments, drafts });
+  }
 
   componentDidMount() {
     this._onHash = () => this.readHash();
@@ -439,6 +524,7 @@ class Component extends DCLogic {
   renderVals() {
     const ov = this.tabStyle('overview'), go = this.tabStyle('goals'),
           te = this.tabStyle('team'), co = this.tabStyle('contact');
+    const st = this.tabStyle('stories');
     const shape = this.props.teamPhotoShape ?? 'circle';
     return {
       brandName: this.props.projectName ?? 'PATH-AMR',
@@ -447,14 +533,31 @@ class Component extends DCLogic {
       showEthics: this.props.showEthics ?? true,
 
       isOverview: this.state.tab === 'overview',
+      isStories: this.state.tab === 'stories',
       isGoals: this.state.tab === 'goals',
       isTeam: this.state.tab === 'team',
       isContact: this.state.tab === 'contact',
 
       ovBg: ov.bg, ovInk: ov.ink, goBg: go.bg, goInk: go.ink,
       teBg: te.bg, teInk: te.ink, coBg: co.bg, coInk: co.ink,
+      stBg: st.bg, stInk: st.ink,
 
       goOverview: () => this.go('overview'),
+      goStories: () => this.go('stories'),
+      stories: STORIES.map((s, i) => {
+        const list = this.state.comments[i] || [];
+        const draft = this.state.drafts[i] || { name: '', text: '' };
+        return {
+          quote: s.quote, name: s.name, context: s.context,
+          comments: list,
+          countLabel: list.length === 1 ? '1 comment' : list.length + ' comments',
+          draftName: draft.name,
+          draftText: draft.text,
+          onDraftName: (e) => this.setDraft(i, 'name', e.target.value),
+          onDraftText: (e) => this.setDraft(i, 'text', e.target.value),
+          onPost: (e) => { e.preventDefault(); this.postComment(i); }
+        };
+      }),
       goGoals: () => this.go('goals'),
       goTeam: () => this.go('team'),
       goContact: () => this.go('contact'),
